@@ -68,12 +68,12 @@ func getDesiredClusterState(
 		return model.DesiredClusterState{}
 	}
 	return model.DesiredClusterState{
-		ConfigMap:    getDesiredConfigMap(cluster),
+		ConfigMap:     getDesiredConfigMap(cluster),
 		JmStatefulSet: getDesiredJobManagerStatefulSet(cluster),
-		JmService:    getDesiredJobManagerService(cluster),
-		JmIngress:    getDesiredJobManagerIngress(cluster),
+		JmService:     getDesiredJobManagerService(cluster),
+		JmIngress:     getDesiredJobManagerIngress(cluster),
 		TmStatefulSet: getDesiredTaskManagerStatefulSet(cluster),
-		Job:          getDesiredJob(observed),
+		Job:           getDesiredJob(observed),
 	}
 }
 
@@ -217,9 +217,9 @@ func getDesiredJobManagerStatefulSet(
 			Labels:          statefulSetLabels,
 		},
 		Spec: appsv1.StatefulSetSpec{
-			Replicas: jobManagerSpec.Replicas,
-			Selector: &metav1.LabelSelector{MatchLabels: podLabels},
-			ServiceName: jobManagerStatefulSetName,
+			Replicas:             jobManagerSpec.Replicas,
+			Selector:             &metav1.LabelSelector{MatchLabels: podLabels},
+			ServiceName:          jobManagerStatefulSetName,
 			VolumeClaimTemplates: jobManagerSpec.VolumeClaimTemplates,
 			Template: corev1.PodTemplateSpec{
 				ObjectMeta: metav1.ObjectMeta{
@@ -511,16 +511,17 @@ func getDesiredTaskManagerStatefulSet(
 		ObjectMeta: metav1.ObjectMeta{
 			Namespace: clusterNamespace,
 			Name:      taskManagerStatefulSetName,
+			// TODO 设置Owner关联关系，方便级联删除和Watch子资源变动
 			OwnerReferences: []metav1.OwnerReference{
 				ToOwnerReference(flinkCluster)},
 			Labels: statefulSetLabels,
 		},
 		Spec: appsv1.StatefulSetSpec{
-			Replicas: &taskManagerSpec.Replicas,
-			Selector: &metav1.LabelSelector{MatchLabels: podLabels},
-			ServiceName: taskManagerStatefulSetName,
+			Replicas:             &taskManagerSpec.Replicas,
+			Selector:             &metav1.LabelSelector{MatchLabels: podLabels},
+			ServiceName:          taskManagerStatefulSetName,
 			VolumeClaimTemplates: taskManagerSpec.VolumeClaimTemplates,
-			PodManagementPolicy: "Parallel",
+			PodManagementPolicy:  "Parallel",
 			Template: corev1.PodTemplateSpec{
 				ObjectMeta: metav1.ObjectMeta{
 					Labels:      podLabels,

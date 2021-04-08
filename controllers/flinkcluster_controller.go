@@ -87,6 +87,8 @@ func (reconciler *FlinkClusterReconciler) Reconcile(
 func (reconciler *FlinkClusterReconciler) SetupWithManager(
 	mgr ctrl.Manager) error {
 	reconciler.Mgr = mgr
+	// TODO *Builder.Complete最终会调用doController创建一个Controller定时调用这里的Reconcile方法
+	//  这里的For/Owns方法用于自动watch相关资源（Operator-sdk需要自己实现Watch逻辑，显然kubebuilder更方便)
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&v1beta1.FlinkCluster{}).
 		Owns(&appsv1.Deployment{}).
